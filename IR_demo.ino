@@ -15,17 +15,18 @@ Oct. 14, 2026
 
 #include "decoder.h"
 
-// GPIOS for Inputs (ESP32 safe input layout)
-const byte Ir = 36;       // Input-only pin, ideal for IR Sensor
+// GPIOS
+const byte IrAdd = 36;
+const byte IrSub = 39;
 
 // Variables
 int counter = 0;
-int input = 0;
+int inputAdd = 0;
+int inputSub = 0;
 
 void setup() {
-  // Pin setup
-  pinMode(Ir, INPUT);
-  
+  pinMode(IrAdd, INPUT);
+  pinMode(IrSub, INPUT);
   // Initialize 7-segment display pins
   initDisplay();
 
@@ -33,16 +34,22 @@ void setup() {
 }
 
 void loop() {
-  // 1. Read IR sensor
-  input = digitalRead(Ir);
-  if (input == 0) {
+  inputAdd = digitalRead(IrAdd);
+  if (inputAdd == 0) {
     if (counter < 99) {
       counter++;
     }
-    delay(300); // Debounce delay
+    delay(300);
   }
 
-  // 2. Refresh display output
+  inputSub = digitalRead(IrSub);
+  if (inputSub == 0) {
+    if (counter > 0) {
+      counter--;
+    }
+    delay(300);
+  }
+
   displayCounter(counter);
   
   delay(50);
